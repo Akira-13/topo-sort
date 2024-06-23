@@ -25,8 +25,8 @@ public class TopologicalSort<E> {
             /*
             Actualiza ambos TSnum y num de Vertex
             */
-            v.setTSnum(r);
-            v.setNum(r);
+            //v.setTSnum(r);
+            //v.setNum(r);
             graph.removeVertex((E) v.getId());
             sortedVertices.add(v);
             //System.out.println(graph.toString());
@@ -41,30 +41,25 @@ public class TopologicalSort<E> {
     evitar que el algoritmo haga más de lo esperado.
     Se asigna un numero de orden a los vertices.
     */
-    private void TS(Vertex<E> v) {
-        v.setNum(i++);
-        for(Vertex<E> adjacentVertex : v.getEdges()){
+    private void TS(Vertex<E> v, DirectedGraph<E> graph) {
+        v.setNum(++i);
+        for(Vertex<E> av : v.getEdges()){
+            Vertex<E> adjacentVertex = graph.getVertex(av.getId());
             if(adjacentVertex.getNum() == 0){
-                TS(adjacentVertex);
+                TS(adjacentVertex, graph);
             }
             else if(adjacentVertex.getTSnum() == 0){
                 throw new IllegalArgumentException("Grafo con ciclo");
             }
         }
-        v.setTSnum(j++);
+        v.setTSnum(++j);
     }
     
     public void topologicalSortDFS(DirectedGraph<E> graph) {
         i = j = 0;
         while (graph.vertexWithNumZero() != null) {
-            TS(graph.vertexWithNumZero());
+            TS(graph.vertexWithNumZero(), graph);
         }
         i = j = 0;
-        /*
-        List<Vertex<E>> orderedVertices = graph.getTopologicalOrdering();
-        for(Vertex<E> v : orderedVertices){
-            System.out.print(v.toString());
-        }
-        */
     }
 }

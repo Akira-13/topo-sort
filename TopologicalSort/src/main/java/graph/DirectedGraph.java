@@ -10,6 +10,22 @@ public class DirectedGraph<E> {
         vertices = new HashMap<>();
     }
 
+    public DirectedGraph(E[] vertexIds, int[][] adjacencyMatrix) {
+        this();
+        for (E vertexId : vertexIds) {
+            addVertex(vertexId);
+        }
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            Vertex<E> fromVertex = vertices.get(vertexIds[i]);
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
+                if (adjacencyMatrix[i][j] == 0) {
+                    Vertex<E> toVertex = vertices.get(vertexIds[j]);
+                    fromVertex.addAdjacentVertex(toVertex);
+                }
+            }
+        }
+    }
+
     public Vertex<E> getVertex(E id) {
         return vertices.get(id);
     }
@@ -59,7 +75,7 @@ public class DirectedGraph<E> {
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
-        for (Vertex v : vertices.values()) {
+        for (Vertex<E> v : vertices.values()) {
             string.append(v.toString()).append("\n");
         }
         return string.toString();
@@ -67,7 +83,25 @@ public class DirectedGraph<E> {
 
     public List<Vertex<E>> getTopologicalOrdering() {
         List<Vertex<E>> sortedVertices = new ArrayList<>(vertices.values());
-        sortedVertices.sort(Comparator.comparingInt(Vertex::getTSnum));
+        if (sortedVertices.get(0).getTSnum() == 0) {
+            throw new IllegalArgumentException("Grafo no ordenado");
+        }
+        sortedVertices.sort(Comparator.comparingInt(Vertex<E>::getTSnum));
         return sortedVertices;
+    }
+
+    /*
+    Metodo para remover el TSNum y num de los vertices
+    Esencialmente, lo desordena
+    Solo para demostracion
+     */
+    public void clearGraph() {
+        for (Vertex<E> v : vertices.values()) {
+            v.setNum(0);
+            v.setTSnum(0);
+            for(Vertex<E> av : v.getEdges()){
+                av.setNum(0); av.setTSnum(0);
+            }
+        }
     }
 }
