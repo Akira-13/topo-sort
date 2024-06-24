@@ -4,10 +4,28 @@
  */
 package planificadorcursos;
 
+import graph.Vertex;
+
 /**
  *
  * @author camila
  */
-public class Curso {
+public class Curso extends Vertex<String> {
+    private boolean completado;
     
+    
+    public Curso(String id) {
+        super(id);
+        this.completado = false;
+    }
+    
+    
+    
+    public boolean isCompletado() {
+        return completado;
+    }
+
+    public void setCompletado(boolean completado) {
+        this.completado = completado;
+    }
 }
