@@ -7,7 +7,8 @@ package planificadorcursos;
 import graph.DirectedGraph;
 import graph.TopologicalSort;
 import graph.Vertex;
-import java.util.*;
+import uni.aed.linkedlistTDA.*;
+import uni.aed.listTDA.*;
 
 /**
  *
@@ -15,7 +16,7 @@ import java.util.*;
  */
 public class PlanificadorCursos {
     private DirectedGraph<String> mallaCurricular;
-    List<Curso> todoCurso = new ArrayList<>();
+    LinkedListTDA<Curso> todoCurso = new LinkedListTDA<>();
     public PlanificadorCursos() {
         mallaCurricular = new DirectedGraph<>();
     }
@@ -27,7 +28,7 @@ public class PlanificadorCursos {
     
     
     // Agregar curso y los cursos que abre
-    public void agregarCurso(Curso curso, List<String> cursosAbiertos) {
+    public void agregarCurso(Curso curso, LinkedListTDA<String> cursosAbiertos) {
         todoCurso.add(curso);
         mallaCurricular.addVertex(curso.getId());
         if (cursosAbiertos != null && !cursosAbiertos.isEmpty()){
@@ -35,8 +36,10 @@ public class PlanificadorCursos {
         }
     }
     
-    public void agregarCursosAbiertos(Curso curso, List<String> cursosAbiertos) {
-        for (String cursoAbierto : cursosAbiertos) {
+    public void agregarCursosAbiertos(Curso curso, LinkedListTDA<String> cursosAbiertos) {
+        IteratorTDA<String> iterador = cursosAbiertos.iterator();
+        while (iterador.hasNext()) {
+        String cursoAbierto = iterador.next();
             Curso n = new Curso(cursoAbierto);
             todoCurso.add(n);
             mallaCurricular.addVertex(cursoAbierto);
@@ -45,11 +48,13 @@ public class PlanificadorCursos {
     }
     
     public Curso getCurso(String cursoId){
-        for(Curso curso : todoCurso){
+        IteratorTDA<Curso> iterador = todoCurso.iterator();
+        while (iterador.hasNext()) {
+            Curso curso = iterador.next();
             if(curso.getId().equals(cursoId)){
                 return curso;
             }
-        } 
+        }
         return null;
     }
     
@@ -58,30 +63,37 @@ public class PlanificadorCursos {
     }
     
     // Ordenación topológica
-    public List<String> obtenerOrdenTopologico() throws Exception {
+    public LinkedListTDA<String> obtenerOrdenTopologico() throws Exception {
         TopologicalSort<String> topoSort = new TopologicalSort<>();
         topoSort.topologicalSortDFS(mallaCurricular);
-        List<String> resultado = new ArrayList<>();
-        for (Vertex<String> v : mallaCurricular.getTopologicalOrdering()) {
+        LinkedListTDA<String> resultado = new LinkedListTDA<>();
+        
+        IteratorTDA<Vertex<String>> iterador = mallaCurricular.getTopologicalOrdering().iterator();
+        while (iterador.hasNext()) {
+        Vertex<String> v = iterador.next();
             resultado.add(v.getId());
         }
         return resultado;
     }
     
     // Cursos disponibles después de completar varios cursos
-    public List<String> obtenerCursosDisponibles(List<String> cursosCompletados) throws Exception {
+    public LinkedListTDA<String> obtenerCursosDisponibles(LinkedListTDA<String> cursosCompletados) throws Exception {
         // Marcar los cursos completados
-        for (String cursoId : cursosCompletados) {
-            cursoCompletado(cursoId);
+        IteratorTDA<String> iterador = cursosCompletados.iterator();
+        while (iterador.hasNext()) {
+        String cursoId = iterador.next();
+             cursoCompletado(cursoId);
         }
 
         // Obtener el orden topológico
         TopologicalSort<String> topoSort = new TopologicalSort<>();
         topoSort.topologicalSortDFS(mallaCurricular);
         
-        List<String> cursosDisponibles = new ArrayList<>();
+        LinkedListTDA<String> cursosDisponibles = new LinkedListTDA<>();
         //Recorre 
-        for (Vertex<String> v : mallaCurricular.getTopologicalOrdering()) {
+        IteratorTDA<Vertex<String>> iterador1 = mallaCurricular.getTopologicalOrdering().iterator();
+        while (iterador1.hasNext()) {
+        Vertex<String> v = iterador1.next();
             Curso curso = getCurso(v.getId());
             //Verifica si el curso no ha sido completado y si es apto 
             if (!curso.isCompletado() && cursoApto(curso.getId())) {
@@ -95,7 +107,7 @@ public class PlanificadorCursos {
         
         
         // Obtener los prerrequisitos del curso
-        List<String> prerrequisitos = obtenerPrerrequisitos(cursoId);
+        LinkedListTDA<String> prerrequisitos = obtenerPrerrequisitos(cursoId);
 
         // Si el curso no tiene prerrequisitos, es apto
         if (prerrequisitos.isEmpty()) {
@@ -103,7 +115,9 @@ public class PlanificadorCursos {
         }
 
         // Verificar si todos los prerrequisitos están completados
-        for (String prerrequisitoId : prerrequisitos) {
+        IteratorTDA<String> iterador = prerrequisitos.iterator();
+        while (iterador.hasNext()) {
+        String prerrequisitoId = iterador.next();
             Curso cursoPrerrequisito = getCurso(prerrequisitoId);
             if (!cursoPrerrequisito.isCompletado()) {
                 return false;
@@ -112,20 +126,23 @@ public class PlanificadorCursos {
         return true;  
     }
     
-    public List<String> obtenerPrerrequisitos(String cursoId) {
-    List<String> prerrequisitos = new ArrayList<>();
-    for (Vertex<String> vertex : mallaCurricular.getAllVertices()) {
-        for (Vertex<String> edge : vertex.getEdges()) {
-            if (edge.getId().equals(cursoId)) {
-                prerrequisitos.add(vertex.getId());
+    public LinkedListTDA<String> obtenerPrerrequisitos(String cursoId) {
+        LinkedListTDA<String> prerrequisitos = new LinkedListTDA<>();
+    
+        for (Vertex<String> vertex : mallaCurricular.getAllVertices()) {
+            IteratorTDA<Vertex<String>> iterador = vertex.getEdges().iterator();
+            while (iterador.hasNext()) {
+            Vertex<String> edge = iterador.next();
+                if (edge.getId().equals(cursoId)) {
+                    prerrequisitos.add(vertex.getId());
+                }
             }
         }
-    }
-    return prerrequisitos;
+        return prerrequisitos;
     }
     
-     public List<String> obtenerCursosSinPrerrequisitos() {
-        List<String> cursosSinPrerrequisitos = new ArrayList<>();
+     public LinkedListTDA<String> obtenerCursosSinPrerrequisitos() {
+        LinkedListTDA<String> cursosSinPrerrequisitos = new LinkedListTDA<>();
         for (Vertex<String> curso : mallaCurricular.getAllVertices()) {
             if (obtenerPrerrequisitos(curso.getId()).isEmpty()) {
                 cursosSinPrerrequisitos.add(curso.getId());
@@ -133,11 +150,14 @@ public class PlanificadorCursos {
         }
         return cursosSinPrerrequisitos;
     }
-    public List<String> obtenerCursosAbiertos(String cursoId) {
-        List<String> cursosAbiertos = new ArrayList<>();
-        for (Vertex<String> curso : mallaCurricular.getVertex(cursoId).getEdges()) {
-            cursosAbiertos.add(curso.getId());
-        }
+    public LinkedListTDA<String> obtenerCursosAbiertos(String cursoId) {
+        LinkedListTDA<String> cursosAbiertos = new LinkedListTDA<>();
+        
+        IteratorTDA<Vertex<String>> iterador = mallaCurricular.getVertex(cursoId).getEdges().iterator();
+            while (iterador.hasNext()) {
+            Vertex<String> curso = iterador.next();
+               cursosAbiertos.add(curso.getId()); 
+            }
         return cursosAbiertos;
     }
     //Ruta a un curso específico
