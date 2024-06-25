@@ -38,7 +38,7 @@ public class DirectedGraph<E> {
         Vertex<E> fromVertex = vertices.get(fromId);
         Vertex<E> toVertex = vertices.get(toId);
         if (fromVertex == null || toVertex == null) {
-            throw new IllegalArgumentException("Invalid vertex id");
+            throw new IllegalArgumentException("ID invalido");
         }
         fromVertex.addAdjacentVertex(toVertex);
     }
