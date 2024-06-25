@@ -1,6 +1,8 @@
 package graph;
 
 import java.util.*;
+import uni.aed.linkedlistTDA.Iterador;
+import uni.aed.linkedlistTDA.LinkedListTDA;
 
 public class TSMain {
 
@@ -71,70 +73,75 @@ public class TSMain {
 
         System.out.println("\nGrafo ordenado mediante DFS:");
         ts.topologicalSortDFS(defaultGraph);
-        ArrayList<Vertex<String>> orderedVertices
-                = (ArrayList<Vertex<String>>) defaultGraph.getTopologicalOrdering();
-        for (Vertex<String> v : orderedVertices) {
-            System.out.print(v.getId() + ", ");
+        LinkedListTDA<Vertex<String>> orderedVertices
+                = defaultGraph.getTopologicalOrdering();
+
+        Iterador<Vertex<String>> it = orderedVertices.iterator();
+        while (it.hasNext()) {
+            System.out.print(it.next().getId() + ",");
         }
         
-        defaultGraph.clearGraph();
         System.out.println("\nGrafo ordenado sin DFS:");
-        orderedVertices
-                = (ArrayList<Vertex<String>>) ts.topologicalSort(defaultGraph);
-        for (Vertex<String> v : orderedVertices) {
-            System.out.print(v.getId() + ", ");
+        orderedVertices.clear();
+        orderedVertices = ts.topologicalSort(defaultGraph);
+        it = orderedVertices.iterator();
+        while(it.hasNext()){
+            System.out.print(it.next().getId() + ",");
         }
     }
-    
-    private void createGraph(){
+
+    private void createGraph() {
         TopologicalSort<String> ts = new TopologicalSort<>();
         int n;
         String input;
         System.out.print("Ingrese el numero de vertices: ");
         n = scr.nextInt();
-        if(n <= 0){
+        if (n <= 0) {
             System.out.print("Numero de vertices invalido: ");
             n = scr.nextInt();
         }
         scr.nextLine();
-        ArrayList<String> vertices = new ArrayList<>(n);
+        LinkedListTDA<String> vertices = new LinkedListTDA<>();
         DirectedGraph<String> graph = new DirectedGraph<>();
-        for(int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             System.out.print("Ingrese clave del vertice " + i + ": ");
             input = scr.nextLine();
             graph.addVertex(input);
             vertices.add(input);
         }
-        for(int i = 0; i < n; i++){
-            System.out.println("Ingrese los vertices conectados al vertice " + 
-                    vertices.get(i) + " separados por espacios");
+        for (int i = 0; i < n; i++) {
+            System.out.println("Ingrese los vertices conectados al vertice "
+                    + vertices.get(i+1) + " separados por espacios");
             input = scr.nextLine();
             String[] edges = input.split(" ");
-            
+
             for (String edge : edges) {
-                if(graph.getVertex(edge) == null){
+                if (graph.getVertex(edge) == null) {
                     continue;
                 }
                 graph.addEdge(vertices.get(i), edge);
             }
         }
         System.out.println(graph.toString());
-        
+
         System.out.println("\nGrafo ordenado mediante DFS:");
         ts.topologicalSortDFS(graph);
-        ArrayList<Vertex<String>> orderedVertices
-                = (ArrayList<Vertex<String>>) graph.getTopologicalOrdering();
-        for (Vertex<String> v : orderedVertices) {
-            System.out.print(v.getId() + ", ");
+        LinkedListTDA<Vertex<String>> orderedVertices
+                = graph.getTopologicalOrdering();
+        Iterador<Vertex<String>> it = orderedVertices.iterator();
+        while (it.hasNext()) {
+            System.out.print(it.next().getId() + ", ");
         }
-        
+
         graph.clearGraph();
         System.out.println("\nGrafo ordenado sin DFS:");
+        orderedVertices.clear();
         orderedVertices
-                = (ArrayList<Vertex<String>>) ts.topologicalSort(graph);
-        for (Vertex<String> v : orderedVertices) {
-            System.out.print(v.getId() + ", ");
+                = ts.topologicalSort(graph);
+        it = orderedVertices.iterator();
+        while (it.hasNext()) {
+            System.out.print(it.next().getId() + ", ");
         }
-        
+
     }
 }

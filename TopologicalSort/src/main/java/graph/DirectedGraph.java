@@ -1,9 +1,12 @@
 package graph;
 
 import java.util.*;
+import uni.aed.linkedlistTDA.Iterador;
+import uni.aed.linkedlistTDA.LinkedListTDA;
 
 public class DirectedGraph<E> {
-
+    
+    private LinkedListTDA Lista;
     private final Map<E, Vertex<E>> vertices;
 
     public DirectedGraph() {
@@ -38,7 +41,7 @@ public class DirectedGraph<E> {
         Vertex<E> fromVertex = vertices.get(fromId);
         Vertex<E> toVertex = vertices.get(toId);
         if (fromVertex == null || toVertex == null) {
-            throw new IllegalArgumentException("Invalid vertex id");
+            throw new IllegalArgumentException("ID Inválido");
         }
         fromVertex.addAdjacentVertex(toVertex);
     }
@@ -81,13 +84,17 @@ public class DirectedGraph<E> {
         return string.toString();
     }
 
-    public List<Vertex<E>> getTopologicalOrdering() {
+    public LinkedListTDA<Vertex<E>> getTopologicalOrdering() {
+        LinkedListTDA<Vertex<E>> sortedV = new LinkedListTDA<>();
         List<Vertex<E>> sortedVertices = new ArrayList<>(vertices.values());
         if (sortedVertices.get(0).getTSnum() == 0) {
             throw new IllegalArgumentException("Grafo no ordenado");
         }
         sortedVertices.sort(Comparator.comparingInt(Vertex<E>::getTSnum));
-        return sortedVertices;
+        for(Vertex<E> v : sortedVertices){
+            sortedV.add(v);
+        }
+        return sortedV;
     }
 
     /*
@@ -99,9 +106,6 @@ public class DirectedGraph<E> {
         for (Vertex<E> v : vertices.values()) {
             v.setNum(0);
             v.setTSnum(0);
-            for(Vertex<E> av : v.getEdges()){
-                av.setNum(0); av.setTSnum(0);
-            }
         }
     }
 }
