@@ -1,7 +1,7 @@
 package graph;
 
-import java.util.ArrayList;
-import java.util.List;
+import uni.aed.linkedlistTDA.Iterador;
+import uni.aed.linkedlistTDA.LinkedListTDA;
 
 public class TopologicalSort<E> {
 
@@ -14,8 +14,8 @@ public class TopologicalSort<E> {
     La función retorna una lista con los vértices ordenados
     empezando desde el primer vértice mínimo que se encuentre.
     */
-    public List<Vertex<E>> topologicalSort(DirectedGraph<E> graph) {
-        ArrayList<Vertex<E>> sortedVertices = new ArrayList<>();
+    public LinkedListTDA<Vertex<E>> topologicalSort(DirectedGraph<E> graph) {
+        LinkedListTDA<Vertex<E>> sortedVertices = new LinkedListTDA<>();
         int size = graph.getAllVertices().size();
         for (int r = 1; r <= size; r++) {
             Vertex<E> v = graph.getMinimalVertex();
@@ -43,15 +43,15 @@ public class TopologicalSort<E> {
     */
     private void TS(Vertex<E> v, DirectedGraph<E> graph) {
         v.setNum(++i);
-        for(Vertex<E> av : v.getEdges()){
-            Vertex<E> adjacentVertex = graph.getVertex(av.getId());
+        Iterador<Vertex<E>> it = v.getEdges().iterator();
+        while(it.hasNext()){
+            Vertex<E> adjacentVertex = graph.getVertex(it.next().getId());
             if(adjacentVertex.getNum() == 0){
                 TS(adjacentVertex, graph);
             }
             else if(adjacentVertex.getTSnum() == 0){
                 throw new IllegalArgumentException("Grafo con ciclo");
-            }
-        }
+            }        }
         v.setTSnum(++j);
     }
     
