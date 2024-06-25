@@ -5,8 +5,8 @@
 package planificadorcursos;
 
 import graph.Vertex;
-import java.util.*;
 import java.util.Scanner;
+import uni.aed.linkedlistTDA.*;
 
 /**
  *
@@ -74,8 +74,7 @@ public class PruebaMain {
         System.out.print("Ingrese el ID del curso: ");
         String cursoId = scanner.nextLine();
         System.out.print("Ingrese los IDs de los cursos que abre (separados por comas): ");
-        String[] cursosQueAbre = scanner.nextLine().split(",");
-        List<String> cursosQueAbreList = Arrays.asList(cursosQueAbre);
+        LinkedListTDA<String> cursosQueAbreList = leerDesdeInput();
 
         Curso curso = new Curso(cursoId);
         planificador.agregarCurso(curso, cursosQueAbreList);
@@ -91,7 +90,7 @@ public class PruebaMain {
 
     private static void obtenerOrdenTopologico() {
         try {
-            List<String> ordenTopologico = planificador.obtenerOrdenTopologico();
+            LinkedListTDA<String> ordenTopologico = planificador.obtenerOrdenTopologico();
             System.out.println("Orden Topológico: " + ordenTopologico);
         } catch (Exception e) {
             System.out.println("Error al obtener el orden topológico: " + e.getMessage());
@@ -100,10 +99,9 @@ public class PruebaMain {
 
     private static void obtenerCursosDisponibles() {
         System.out.print("Ingrese los IDs de los cursos completados (separados por comas): ");
-        String[] cursosCompletados = scanner.nextLine().split(",");
-        List<String> cursosCompletadosList = Arrays.asList(cursosCompletados);
+        LinkedListTDA<String> cursosCompletadosList = leerDesdeInput();
         try {
-            List<String> cursosDisponibles = planificador.obtenerCursosDisponibles(cursosCompletadosList);
+            LinkedListTDA<String> cursosDisponibles = planificador.obtenerCursosDisponibles(cursosCompletadosList);
             System.out.println("Cursos Disponibles: " + cursosDisponibles);
         } catch (Exception e) {
             System.out.println("Error al obtener los cursos disponibles: " + e.getMessage());
@@ -111,15 +109,19 @@ public class PruebaMain {
     }
 
     private static void obtenerCursosSinPrerrequisitos() {
-        List<String> cursosSinPrerrequisitos = planificador.obtenerCursosSinPrerrequisitos();
+        LinkedListTDA<String> cursosSinPrerrequisitos = planificador.obtenerCursosSinPrerrequisitos();
         System.out.println("Cursos sin Prerrequisitos: " + cursosSinPrerrequisitos);
     }
 
     private static void obtenerCursosAbiertos() {
         System.out.print("Ingrese el ID del curso: ");
         String cursoId = scanner.nextLine();
-        List<String> cursosAbiertos = planificador.obtenerCursosAbiertos(cursoId);
+        LinkedListTDA<String> cursosAbiertos = planificador.obtenerCursosAbiertos(cursoId);
+        if (cursosAbiertos.isEmpty()) {
+        System.out.println("El curso " + cursoId + " no abre ningún curso.");
+        } else {
         System.out.println("Cursos que abre el curso " + cursoId + ": " + cursosAbiertos);
+        }
     }
     
     private static void agregarCursosAbiertos() {
@@ -135,13 +137,38 @@ public class PruebaMain {
         Curso curso = new Curso(vertex.getId());
 
         System.out.print("Ingrese los IDs de los cursos que abre (separados por comas): ");
-        String[] cursosQueAbre = scanner.nextLine().split(",");
-        List<String> cursosQueAbreList = Arrays.asList(cursosQueAbre);
+        LinkedListTDA<String> cursosQueAbreList = leerDesdeInput();
 
         planificador.agregarCursosAbiertos(curso, cursosQueAbreList);
         System.out.println("Cursos agregados exitosamente.");
     }
+    
+    public static LinkedListTDA<String> leerDesdeInput() {
+        LinkedListTDA<String> entrada = new LinkedListTDA<>();
+        String input = scanner.nextLine().trim();  // Lee la entrada del usuario y elimina espacios en blanco al inicio y al final
 
+        // Leer cada entrada separado por comas y agregarlo a la lista
+        StringBuilder entradaActual = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c == ',') {
+                // Agregar la entrada actual a la lista
+                entrada.add(entradaActual.toString().trim());
+                // Limpiar para la próxima entrada
+                entradaActual.setLength(0);
+            } else {
+                // Construir el nombre de la entrada actual
+                entradaActual.append(c);
+            }
+        }
+
+        // Agregar la ultima entrada después del último separador ","
+        if (entradaActual.length() > 0) {
+            entrada.add(entradaActual.toString().trim());
+        }
+
+        return entrada;
+    }
     private static void mostrar() {
         System.out.println(planificador.toString());
     }
