@@ -13,6 +13,7 @@ import uni.aed.linkedlistTDA.*;
  * @author camila
  */
 public class PruebaMain {
+
     private static Scanner scanner = new Scanner(System.in);
     private static PlanificadorCursos planificador = new PlanificadorCursos();
 
@@ -45,6 +46,9 @@ public class PruebaMain {
                     agregarCursosAbiertos();
                     break;
                 case 8:
+                    cargarMallaCC();
+                    break;
+                case 9:
                     mostrar();
                     break;
                 case 0:
@@ -65,7 +69,8 @@ public class PruebaMain {
         System.out.println("5. Obtener Cursos sin Prerrequisitos");
         System.out.println("6. Obtener Cursos que Abre un Curso");
         System.out.println("7. Agregar Cursos Abiertos a un Curso Existente");
-        System.out.println("8. Mostrar");
+        System.out.println("8. Cargar Cursos por Defecto (Cursos CC hasta 5to Semestre");
+        System.out.println("9. Mostrar");
         System.out.println("0. Salir");
         System.out.print("Seleccione una opción: ");
     }
@@ -118,21 +123,21 @@ public class PruebaMain {
         String cursoId = scanner.nextLine();
         LinkedListTDA<String> cursosAbiertos = planificador.obtenerCursosAbiertos(cursoId);
         if (cursosAbiertos.isEmpty()) {
-        System.out.println("El curso " + cursoId + " no abre ningún curso.");
+            System.out.println("El curso " + cursoId + " no abre ningún curso.");
         } else {
-        System.out.println("Cursos que abre el curso " + cursoId + ": " + cursosAbiertos);
+            System.out.println("Cursos que abre el curso " + cursoId + ": " + cursosAbiertos);
         }
     }
-    
+
     private static void agregarCursosAbiertos() {
         System.out.print("Ingrese el ID del curso existente: ");
         String cursoId = scanner.nextLine();
-        Vertex<String> vertex =  planificador.getMallaCurricular().getVertex(cursoId);
+        Vertex<String> vertex = planificador.getMallaCurricular().getVertex(cursoId);
 
         if (vertex == null) {
-        System.out.println("Curso no encontrado.");
-        return;
-    }
+            System.out.println("Curso no encontrado.");
+            return;
+        }
 
         Curso curso = new Curso(vertex.getId());
 
@@ -142,7 +147,41 @@ public class PruebaMain {
         planificador.agregarCursosAbiertos(curso, cursosQueAbreList);
         System.out.println("Cursos agregados exitosamente.");
     }
-    
+
+    //Cursos por defecto hasta 5to semestre
+    private static void cargarMallaCC() {
+        LinkedListTDA<String> cursosAbiertos = new LinkedListTDA<>();
+        cursosAbiertos.add("Fundamentos de Programacion");
+        planificador.agregarCurso(new Curso("IC"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("POO");
+        cursosAbiertos.add("Arquitectura de Computadores");
+        planificador.agregarCursosAbiertos(new Curso("Fundamentos de Programacion"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Base de Datos");
+        cursosAbiertos.add("Algoritmos y Estructuras de Datos");
+        planificador.agregarCursosAbiertos(new Curso("POO"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Sistemas Operativos");
+        planificador.agregarCursosAbiertos(new Curso("Arquitectura de Computadores"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Matematica Discreta");
+        planificador.agregarCurso(new Curso("Algebra Lineal"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Algoritmos y Estructuras de Datos");
+        planificador.agregarCursosAbiertos(new Curso("Matematica Discreta"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Teoria de Automatas");
+        cursosAbiertos.add("Analisis y Diseño de Algoritmos");
+        planificador.agregarCursosAbiertos(new Curso("Algoritmos y Estructuras de Datos"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Computacion Centrada en Redes");
+        planificador.agregarCursosAbiertos(new Curso("Sistemas Operativos"), cursosAbiertos);
+        cursosAbiertos.clear();
+        cursosAbiertos.add("Ingenieria de Software");
+        planificador.agregarCursosAbiertos(new Curso("Base de Datos"), cursosAbiertos);
+    }
+
     public static LinkedListTDA<String> leerDesdeInput() {
         LinkedListTDA<String> entrada = new LinkedListTDA<>();
         String input = scanner.nextLine().trim();  // Lee la entrada del usuario y elimina espacios en blanco al inicio y al final
@@ -169,6 +208,7 @@ public class PruebaMain {
 
         return entrada;
     }
+
     private static void mostrar() {
         System.out.println(planificador.toString());
     }
