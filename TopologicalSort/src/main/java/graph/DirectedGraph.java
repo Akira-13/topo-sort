@@ -1,7 +1,6 @@
 package graph;
 
 import java.util.*;
-import uni.aed.linkedlistTDA.Iterador;
 import uni.aed.linkedlistTDA.LinkedListTDA;
 
 public class DirectedGraph<E> {
@@ -97,15 +96,4 @@ public class DirectedGraph<E> {
         return sortedV;
     }
 
-    /*
-    Metodo para remover el TSNum y num de los vertices
-    Esencialmente, lo desordena
-    Solo para demostracion
-     */
-    public void clearGraph() {
-        for (Vertex<E> v : vertices.values()) {
-            v.setNum(0);
-            v.setTSnum(0);
-        }
-    }
 }
