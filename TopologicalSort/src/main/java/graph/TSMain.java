@@ -133,7 +133,6 @@ public class TSMain {
             System.out.print(it.next().getId() + ", ");
         }
 
-        graph.clearGraph();
         System.out.println("\nGrafo ordenado sin DFS:");
         orderedVertices.clear();
         orderedVertices
