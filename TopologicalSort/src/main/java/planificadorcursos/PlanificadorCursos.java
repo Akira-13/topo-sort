@@ -11,23 +11,43 @@ import uni.aed.linkedlistTDA.*;
 import uni.aed.listTDA.*;
 
 /**
- *
- * @author camila
+ * La clase PlanificadorCursos permite la gestión de un plan de estudios universitario,
+ * representando cursos y sus relaciones de prerrequisitos mediante un grafo dirigido.
+ * Proporciona funcionalidades para agregar cursos, determinar el orden de toma de cursos,
+ * y obtener cursos disponibles tras completar ciertos cursos.
+ * 
+ * @autor camila
  */
+
 public class PlanificadorCursos {
     private DirectedGraph<String> mallaCurricular;
     LinkedListTDA<Curso> todoCurso = new LinkedListTDA<>();
+    
+    /**
+     * Constructor de la clase PlanificadorCursos. Inicializa un grafo dirigido vacío
+     * para representar la malla curricular.
+     */
     public PlanificadorCursos() {
         mallaCurricular = new DirectedGraph<>();
     }
+    
 
+    /**
+     * Método para obtener el grafo dirigido que representa la malla curricular.
+     * 
+     * @return El grafo dirigido que representa la malla curricular.
+     */
     public DirectedGraph<String> getMallaCurricular() {
         return mallaCurricular;
     }
     
     
     
-    // Agregar curso y los cursos que abre
+    /**
+     * Método para agregar un curso y sus cursos abiertos (cursos que pueden tomarse
+     * después de completar el curso actual).
+     * 
+     */
     public void agregarCurso(Curso curso, LinkedListTDA<String> cursosAbiertos) {
         todoCurso.add(curso);
         mallaCurricular.addVertex(curso.getId());
@@ -36,6 +56,12 @@ public class PlanificadorCursos {
         }
     }
     
+    /**
+     * Método auxiliar para agregar los cursos abiertos por un curso.
+     * 
+     * @param curso El curso que abre otros cursos.
+     * @param cursosAbiertos Lista de identificadores de los cursos abiertos por el curso actual.
+     */
     public void agregarCursosAbiertos(Curso curso, LinkedListTDA<String> cursosAbiertos) {
         IteratorTDA<String> iterador = cursosAbiertos.iterator();
         while (iterador.hasNext()) {
@@ -47,6 +73,11 @@ public class PlanificadorCursos {
         }
     }
     
+    /* Método para obtener un curso a partir de su identificador.
+     * 
+     * @param cursoId El identificador del curso.
+     * @return El curso correspondiente al identificador, o null si no se encuentra.
+     */
     public Curso getCurso(String cursoId){
         IteratorTDA<Curso> iterador = todoCurso.iterator();
         while (iterador.hasNext()) {
@@ -58,11 +89,21 @@ public class PlanificadorCursos {
         return null;
     }
     
+    /**
+     * Método para marcar un curso como completado.
+     * 
+     * @param cursoId El identificador del curso a marcar como completado.
+     */
      public void cursoCompletado(String cursoId) {
         getCurso(cursoId).setCompletado(true);
     }
     
-    // Ordenación topológica
+    /**
+     * Método para obtener el orden topológico de los cursos en la malla curricular.
+     * 
+     * @return Una lista con los identificadores de los cursos en orden topológico.
+     * @throws Exception Si hay un ciclo en la malla curricular.
+     */
     public LinkedListTDA<String> obtenerOrdenTopologico() throws Exception {
         TopologicalSort<String> topoSort = new TopologicalSort<>();
         topoSort.topologicalSortDFS(mallaCurricular);
@@ -126,6 +167,12 @@ public class PlanificadorCursos {
         return true;  
     }
     
+    /**
+     * Método para obtener los prerrequisitos de un curso.
+     * 
+     * @param cursoId El identificador del curso.
+     * @return Una lista de identificadores de los cursos prerrequisitos.
+     */
     public LinkedListTDA<String> obtenerPrerrequisitos(String cursoId) {
         LinkedListTDA<String> prerrequisitos = new LinkedListTDA<>();
     
@@ -141,6 +188,12 @@ public class PlanificadorCursos {
         return prerrequisitos;
     }
     
+    /**
+     * Método para obtener los cursos que no tienen prerrequisitos.
+     * 
+     * Se verifica si la lista obtenerPrerrequisitos es vacia
+     * @return Una lista de identificadores de los cursos sin prerrequisitos.
+     */
      public LinkedListTDA<String> obtenerCursosSinPrerrequisitos() {
         LinkedListTDA<String> cursosSinPrerrequisitos = new LinkedListTDA<>();
         for (Vertex<String> curso : mallaCurricular.getAllVertices()) {
@@ -150,6 +203,14 @@ public class PlanificadorCursos {
         }
         return cursosSinPrerrequisitos;
     }
+    
+     /**
+     * Método para obtener los cursos abiertos (cursos que pueden tomarse 
+     * después de completar un curso específico).
+     * 
+     * @param cursoId El identificador del curso.
+     * @return Una lista de identificadores de los cursos abiertos.
+     */
     public LinkedListTDA<String> obtenerCursosAbiertos(String cursoId) {
         LinkedListTDA<String> cursosAbiertos = new LinkedListTDA<>();
         
